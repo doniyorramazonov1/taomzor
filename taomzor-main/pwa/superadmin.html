@@ -415,14 +415,12 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="config.js"></script>
 <script>
-const SUPABASE_URL='https://qtyfohdvzjgmiqakaeds.supabase.co';
-const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0eWZvaGR2empnbWlxYWthZWRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxNzAyNTIsImV4cCI6MjA4OTc0NjI1Mn0.M3iAx2-gN0H7m_IT1cDXLN-AmpzsJO5ZCcNJzBByXrs';
 const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 
-// Super admin ma'lumotlari — o'zgartiring!
-const SA_LOGIN='sharqtech';
-const SA_PAROL='sharq1505';
+const SA_LOGIN='';
+const SA_PAROL='';
 
 let kafelarData=[], kafeImgFile=null;
 

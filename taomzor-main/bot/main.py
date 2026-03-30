@@ -14,7 +14,9 @@ load_dotenv()
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 SUPABASE_URL = os.getenv("SUPABASE_URL")
 SUPABASE_KEY = os.getenv("SUPABASE_KEY")
-PWA_URL = os.getenv("PWA_URL", "https://example.com")
+PWA_URL = os.getenv("PWA_URL", "")
+ADMIN_TELEGRAM = os.getenv("ADMIN_TELEGRAM", "")
+ADMIN_PHONE = os.getenv("ADMIN_PHONE", "")
 
 bot = Bot(token=BOT_TOKEN)
 dp = Dispatcher()
@@ -184,8 +186,10 @@ async def kafelar_royxati(message: types.Message):
 # === ALOQA ===
 @dp.message(F.text == "📞 Aloqa")
 async def aloqa(message: types.Message):
+    admin_user = f"@{ADMIN_TELEGRAM}" if ADMIN_TELEGRAM else ""
+    admin_phone = ADMIN_PHONE or "—"
     await message.answer(
-        "📞 <b>Aloqa:</b>\n\nAdmin: @admin_username\nTelefon: +998901234567",
+        f"📞 <b>Aloqa:</b>\n\nAdmin: {admin_user}\nTelefon: {admin_phone}",
         parse_mode="HTML"
     )
 
