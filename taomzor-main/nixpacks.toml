@@ -2,7 +2,7 @@
 python = "3.11"
 
 [start]
-cmd = "python bot/main.py"
+cmd = "python bot_project/main.py"
 
 [install]
-cmds = ["pip install -r bot/requirements.txt"]
+cmds = ["pip install -r bot_project/requirements.txt"]
