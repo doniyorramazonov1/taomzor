@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#C84B31">
+  <title>Taomzor</title>
+  <link rel="manifest" href="/manifest.json">
+  <link rel="apple-touch-icon" href="/icon-192.png">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    :root{--bg:#FFFBF5;--bg2:#F5EFE6;--card:#FFFFFF;--text:#1C1410;--text2:#6B5B4E;--accent:#C84B31;--accent2:#E8956D;--border:#E8DDD4;--shadow:0 2px 16px rgba(28,20,16,0.08);}
+    .dark{--bg:#12100E;--bg2:#1C1814;--card:#241E1A;--text:#F5EFE6;--text2:#A89080;--accent:#E8956D;--accent2:#C84B31;--border:#2E2420;--shadow:0 2px 16px rgba(0,0,0,0.3);}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);max-width:430px;margin:0 auto;min-height:100vh;transition:background .3s,color .3s;}
+    .page{display:none;}.page.active{display:block;}
+    .topbar{position:sticky;top:0;z-index:100;background:var(--bg);padding:12px 16px 10px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;}
+    .logo{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;letter-spacing:-0.5px;color:var(--text);}
+    .logo span{color:var(--accent);}
+    .icon-btn{width:34px;height:34px;border-radius:50%;border:1.5px solid var(--border);background:var(--bg2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;color:var(--text);}
+    .search-wrap{padding:12px 16px 8px;position:relative;}
+    .search-box{width:100%;padding:11px 14px 11px 40px;border-radius:12px;border:1.5px solid var(--border);background:var(--card);color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;outline:none;transition:border .2s;}
+    .search-box:focus{border-color:var(--accent);}
+    .search-box::placeholder{color:var(--text2);}
+    .s-icon{position:absolute;left:28px;top:50%;transform:translateY(-50%);font-size:15px;pointer-events:none;}
+    .sr-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--card);border-radius:12px;margin-bottom:8px;border:1px solid var(--border);cursor:pointer;}
+    .sr-emoji{width:40px;height:40px;display:flex;align-items:center;justify-content:center;background:var(--bg2);border-radius:10px;font-size:20px;flex-shrink:0;overflow:hidden;}
+    .sr-info{flex:1;}
+    .sr-name{font-size:13px;font-weight:500;color:var(--text);}
+    .sr-cafe{font-size:11px;color:var(--text2);}
+    .sr-price{font-size:13px;font-weight:500;color:var(--accent);}
+    .slider-wrap{padding:0 0 0 16px;margin:4px 0 14px;}
+    .slider-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:500;margin-bottom:8px;padding-right:16px;color:var(--text);}
+    .slider-row{display:flex;gap:10px;overflow-x:auto;padding-right:16px;padding-bottom:4px;}
+    .slider-row::-webkit-scrollbar{display:none;}
+    .slide-card{min-width:170px;background:var(--card);border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);flex-shrink:0;cursor:pointer;}
+    .slide-img{height:80px;display:flex;align-items:center;justify-content:center;font-size:32px;background:linear-gradient(135deg,#FEF3E2,#FCDBA0);}
+    .dark .slide-img{background:linear-gradient(135deg,#2A1F0E,#3D2A10);}
+    .slide-body{padding:8px 10px 10px;}
+    .slide-badge{display:inline-block;background:var(--accent);color:white;font-size:10px;font-weight:500;padding:2px 7px;border-radius:20px;margin-bottom:4px;}
+    .slide-name{font-size:12px;font-weight:500;margin-bottom:4px;color:var(--text);}
+    .slide-price{display:flex;gap:6px;align-items:center;}
+    .slide-old{font-size:10px;color:var(--text2);text-decoration:line-through;}
+    .slide-new{font-size:12px;font-weight:500;color:var(--accent);}
+    .section{padding:0 16px;}
+    .section-title{font-family:'Playfair Display',serif;font-size:16px;font-weight:500;margin-bottom:10px;color:var(--text);}
+    .kafe-list{display:flex;flex-direction:column;gap:8px;padding-bottom:90px;}
+    .kafe-card{background:var(--card);border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;display:flex;align-items:center;transition:transform .2s;}
+    .kafe-card:active{transform:scale(0.98);}
+    .kafe-emoji{width:70px;height:70px;display:flex;align-items:center;justify-content:center;font-size:28px;background:var(--bg2);flex-shrink:0;overflow:hidden;}
+    .kafe-emoji img{width:100%;height:100%;object-fit:cover;}
+    .kafe-info{padding:10px 12px;flex:1;}
+    .kafe-name{font-size:14px;font-weight:500;margin-bottom:2px;color:var(--text);}
+    .kafe-meta{font-size:11px;color:var(--text2);margin-bottom:5px;}
+    .kafe-tags{display:flex;gap:5px;flex-wrap:wrap;}
+    .kafe-tag{font-size:10px;background:var(--bg2);color:var(--text2);padding:2px 7px;border-radius:20px;}
+    .kafe-arrow{padding-right:12px;color:var(--text2);font-size:18px;}
+    .kafe-slider{position:relative;overflow:hidden;height:180px;background:var(--bg2);}
+    .kafe-slides{display:flex;height:100%;transition:transform .4s ease;}
+    .kafe-slide{min-width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:64px;}
+    .kafe-slide:nth-child(1){background:linear-gradient(135deg,#FEF3E2,#FCDBA0);}
+    .kafe-slide:nth-child(2){background:linear-gradient(135deg,#E8F5E9,#C8E6C9);}
+    .kafe-slide:nth-child(3){background:linear-gradient(135deg,#FBE9E7,#FFCCBC);}
+    .dark .kafe-slide:nth-child(1){background:linear-gradient(135deg,#2A1F0E,#3D2A10);}
+    .dark .kafe-slide:nth-child(2){background:linear-gradient(135deg,#0D1F0E,#1B3A1C);}
+    .dark .kafe-slide:nth-child(3){background:linear-gradient(135deg,#2A0E0E,#3D1A10);}
+    .slide-dots{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);display:flex;gap:5px;}
+    .dot{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.5);transition:all .3s;}
+    .dot.active{background:white;width:16px;border-radius:3px;}
+    .kafe-header{padding:12px 16px 10px;}
+    .kafe-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:600;margin-bottom:3px;color:var(--text);}
+    .kafe-subtitle{font-size:12px;color:var(--text2);}
+    .cats{display:flex;gap:7px;overflow-x:auto;padding:0 16px 4px;margin-bottom:10px;}
+    .cats::-webkit-scrollbar{display:none;}
+    .cat{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:var(--card);color:var(--text2);font-size:12px;font-weight:500;white-space:nowrap;cursor:pointer;transition:all .2s;}
+    .cat.active{background:var(--accent);border-color:var(--accent);color:white;}
+    .menu-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;padding:0 16px 100px;}
+    .food-card{background:var(--card);border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow);cursor:pointer;transition:transform .2s;}
+    .food-card:active{transform:scale(0.97);}
+    .food-img{width:100%;height:110px;display:flex;align-items:center;justify-content:center;font-size:36px;background:var(--bg2);}
+    .food-img img{width:100%;height:100%;object-fit:cover;}
+    .food-body{padding:8px 10px 10px;}
+    .food-name{font-size:12px;font-weight:500;margin-bottom:2px;color:var(--text);}
+    .food-gram{font-size:10px;color:var(--text2);margin-bottom:6px;}
+    .food-bottom{display:flex;align-items:center;justify-content:space-between;}
+    .food-price{font-size:12px;font-weight:500;color:var(--accent);}
+    .add-btn{width:26px;height:26px;border-radius:7px;background:var(--accent);border:none;color:white;font-size:17px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:200;align-items:flex-end;justify-content:center;}
+    .overlay.show{display:flex;}
+    .sheet{background:var(--card);border-radius:20px 20px 0 0;padding:20px 16px 36px;width:100%;max-width:430px;animation:slideUp .3s ease;position:relative;max-height:85vh;overflow-y:auto;}
+    @keyframes slideUp{from{transform:translateY(100%)}to{transform:translateY(0)}}
+    .d-img{width:72px;height:72px;border-radius:14px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto 12px;overflow:hidden;}
+    .d-img img{width:100%;height:100%;object-fit:cover;}
+    .d-name{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;margin-bottom:5px;text-align:center;color:var(--text);}
+    .d-tags{display:flex;gap:7px;margin-bottom:14px;justify-content:center;}
+    .d-tag{background:var(--bg2);border-radius:8px;padding:3px 9px;font-size:11px;color:var(--text2);}
+    .qty-row{display:flex;align-items:center;justify-content:center;gap:18px;margin:14px 0;}
+    .qty-btn{width:40px;height:40px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .qty-num{font-family:'Playfair Display',serif;font-size:26px;font-weight:600;min-width:36px;text-align:center;color:var(--text);}
+    .d-total{font-size:18px;font-weight:500;text-align:center;margin-bottom:16px;color:var(--accent);}
+    .primary-btn{width:100%;padding:13px;border-radius:12px;background:var(--accent);color:white;border:none;font-size:14px;font-weight:500;cursor:pointer;font-family:'DM Sans',sans-serif;}
+    .close-btn{position:absolute;top:14px;right:14px;width:30px;height:30px;border-radius:50%;background:var(--bg2);border:none;color:var(--text2);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .cart-item{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+    .ci-img{width:40px;height:40px;border-radius:9px;background:var(--bg2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;overflow:hidden;}
+    .ci-img img{width:100%;height:100%;object-fit:cover;}
+    .ci-info{flex:1;}
+    .ci-name{font-size:13px;font-weight:500;margin-bottom:2px;color:var(--text);}
+    .ci-price{font-size:11px;color:var(--text2);}
+    .ci-qty{display:flex;align-items:center;gap:5px;}
+    .cq-btn{width:24px;height:24px;border-radius:6px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .cq-num{font-size:13px;font-weight:500;min-width:16px;text-align:center;color:var(--text);}
+    .rm-btn{width:24px;height:24px;border-radius:6px;border:none;background:#FEE2E2;color:#DC2626;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+    .cart-footer{padding:14px 0 0;}
+    .cart-total-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;}
+    .ct-label{font-size:14px;font-weight:500;color:var(--text);}
+    .ct-sum{font-family:'Playfair Display',serif;font-size:20px;color:var(--accent);}
+    .cart-bar{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);background:var(--text);color:var(--bg);border-radius:14px;padding:12px 20px;display:none;align-items:center;gap:14px;width:calc(100% - 32px);max-width:398px;box-shadow:0 8px 32px rgba(0,0,0,0.2);z-index:150;cursor:pointer;}
+    .cart-bar.show{display:flex;}
+    .cb-count{background:var(--accent);color:white;width:24px;height:24px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:500;}
+    .cb-text{flex:1;font-size:13px;font-weight:500;}
+    .cb-sum{font-size:13px;font-weight:500;color:var(--accent2);}
+    .form-input{width:100%;padding:11px 14px;border-radius:11px;border:1.5px solid var(--border);background:var(--bg2);color:var(--text);font-family:'DM Sans',sans-serif;font-size:13px;outline:none;margin-bottom:10px;}
+    .form-input:focus{border-color:var(--accent);}
+    .form-input::placeholder{color:var(--text2);}
+    .form-label{font-size:12px;font-weight:500;margin-bottom:5px;color:var(--text2);display:block;}
+    .sharqtech-badge{text-align:center;padding:12px 0 4px;font-size:11px;color:var(--text2);opacity:.6;}
+    .sharqtech-badge span{font-weight:500;}
+    .loading{text-align:center;padding:32px 0;color:var(--text2);font-size:13px;}
+    .sheet-title{font-family:'Playfair Display',serif;font-size:18px;font-weight:600;margin-bottom:14px;color:var(--text);}
+  </style>
+</head>
+<body>
+
+<div id="homePage" class="page active">
+  <div class="topbar">
+    <div class="logo">Taom<span>zor</span></div>
+    <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+  </div>
+  <div class="search-wrap">
+    <span class="s-icon">🔍</span>
+    <input class="search-box" placeholder="Taom yoki kafe qidiring..." oninput="doSearch(this.value)">
+  </div>
+  <div id="searchResults" style="padding:0 16px 10px;display:none;"></div>
+  <div id="homeContent">
+    <div class="slider-wrap">
+      <div class="slider-title">🔥 Bugungi chegirmalar</div>
+      <div class="slider-row" id="chegirmalarRow"><div class="loading">Yuklanmoqda...</div></div>
+    </div>
+    <div class="section">
+      <div class="section-title">🏪 Kafelar</div>
+      <div class="kafe-list" id="kafeList"><div class="loading">Yuklanmoqda...</div></div>
+    </div>
+    <div class="sharqtech-badge">Powered by <span>SharqTech</span></div>
+  </div>
+</div>
+
+<div id="kafePage" class="page">
+  <div class="topbar">
+    <button class="icon-btn" onclick="goBack()">‹</button>
+    <div class="logo" id="kafePageTitle">Kafe</div>
+    <button class="icon-btn" id="themeBtn2" onclick="toggleTheme()">🌙</button>
+  </div>
+  <div class="kafe-slider">
+    <div class="kafe-slides" id="kafeSlides"></div>
+    <div class="slide-dots" id="slideDots"></div>
+  </div>
+  <div class="kafe-header">
+    <div class="kafe-title" id="kafeName"></div>
+    <div class="kafe-subtitle" id="kafeMeta"></div>
+  </div>
+  <div class="cats" id="menuCats">
+    <div class="cat active" onclick="filterMenu(this,'barchasi')">Barchasi</div>
+  </div>
+  <div class="menu-grid" id="menuGrid"></div>
+</div>
+
+<div class="overlay" id="detailOverlay" onclick="if(event.target===this)closeDetail()">
+  <div class="sheet">
+    <button class="close-btn" onclick="closeDetail()">✕</button>
+    <div class="d-img" id="dImg">🍽</div>
+    <div class="d-name" id="dName"></div>
+    <div class="d-tags">
+      <span class="d-tag" id="dGram"></span>
+      <span class="d-tag" id="dCafe"></span>
+    </div>
+    <div class="qty-row">
+      <button class="qty-btn" onclick="changeQty(-1)">−</button>
+      <div class="qty-num" id="qtyNum">1</div>
+      <button class="qty-btn" onclick="changeQty(1)">+</button>
+    </div>
+    <div class="d-total" id="dTotal"></div>
+    <button class="primary-btn" onclick="addToCart()">Savatga qo'shish</button>
+  </div>
+</div>
+
+<div class="overlay" id="cartOverlay" onclick="if(event.target===this)closeCart()">
+  <div class="sheet">
+    <button class="close-btn" onclick="closeCart()">✕</button>
+    <div class="sheet-title">Savatcha</div>
+    <div id="cartItems"></div>
+    <div class="cart-footer">
+      <div class="cart-total-row">
+        <span class="ct-label">Jami:</span>
+        <span class="ct-sum" id="ctSum"></span>
+      </div>
+      <button class="primary-btn" onclick="showOrderForm()">Buyurtma berish →</button>
+    </div>
+  </div>
+</div>
+
+<div class="overlay" id="orderOverlay" onclick="if(event.target===this)closeOrder()">
+  <div class="sheet">
+    <button class="close-btn" onclick="closeOrder()">✕</button>
+    <div class="sheet-title">Buyurtmani tasdiqlash</div>
+    <div id="orderSummary" style="font-size:12px;color:var(--text2);margin-bottom:14px;"></div>
+    <label class="form-label">Ismingiz *</label>
+    <input class="form-input" id="orderIsm" placeholder="To'liq ismingiz">
+    <label class="form-label">Telefon raqam *</label>
+    <input class="form-input" id="orderTel" placeholder="+998 90 123 45 67" type="tel">
+    <label class="form-label">Manzil (ixtiyoriy)</label>
+    <input class="form-input" id="orderManzil" placeholder="Ko'cha, uy raqami">
+    <button class="primary-btn" onclick="submitOrder()">✅ Tasdiqlash</button>
+    <div class="sharqtech-badge">Powered by <span>SharqTech</span></div>
+  </div>
+</div>
+
+<div class="cart-bar" id="cartBar" onclick="openCart()">
+  <div class="cb-count" id="cbCount">0</div>
+  <div class="cb-text">Savatcha</div>
+  <div class="cb-sum" id="cbSum"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL='https://qtyfohdvzjgmiqakaeds.supabase.co';
+const SUPABASE_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF0eWZvaGR2empnbWlxYWthZWRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQxNzAyNTIsImV4cCI6MjA4OTc0NjI1Mn0.M3iAx2-gN0H7m_IT1cDXLN-AmpzsJO5ZCcNJzBByXrs';
+const sb=supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+
+let cart=[],currentFood=null,currentQty=1,currentKafe=null,menuCat='barchasi';
+let slideIdx=0,slideTimer=null;
+window._kafeData=[];window._chegirmaData=[];window._menuData=[];window._searchData=[];window._kafeSearchData=[];
+
+function fmt(n){return Number(n).toLocaleString('uz-UZ')+' so\'m';}
+
+function toggleTheme(){
+  document.body.classList.toggle('dark');
+  const d=document.body.classList.contains('dark');
+  const icon=d?'☀️':'🌙';
+  document.getElementById('themeBtn').textContent=icon;
+  const t2=document.getElementById('themeBtn2');
+  if(t2)t2.textContent=icon;
+  localStorage.setItem('theme',d?'dark':'light');
+}
+(function(){
+  if(localStorage.getItem('theme')==='dark'){
+    document.body.classList.add('dark');
+    document.getElementById('themeBtn').textContent='☀️';
+  }
+})();
+
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0,0);
+}
+function goBack(){showPage('homePage');clearInterval(slideTimer);}
+
+async function loadHome(){
+  await Promise.all([loadChegirmalar(),loadKafelar()]);
+}
+
+async function loadChegirmalar(){
+  try{
+    const {data}=await sb.from('chegirmalar').select('*,menyular(nomi),kafelar(nomi)').eq('faol',true);
+    const row=document.getElementById('chegirmalarRow');
+    if(!data||!data.length){
+      row.innerHTML='<div style="padding:16px 0;color:var(--text2);font-size:12px;">Hozircha chegirmalar yo\'q</div>';
+      return;
+    }
+    window._chegirmaData=data;
+    row.innerHTML=data.map((d,i)=>{
+      const t=d.menyular||{};const k=d.kafelar||{};
+      return `<div class="slide-card" onclick="openChegirmaDetail(${i})">
+        <div class="slide-img">🍽</div>
+        <div class="slide-body">
+          <div class="slide-badge">Chegirma</div>
+          <div class="slide-name">${t.nomi||'—'}</div>
+          <div style="font-size:10px;color:var(--text2);margin-bottom:3px;">${k.nomi||'—'}</div>
+          <div class="slide-price">
+            <span class="slide-old">${fmt(d.asl_narx)}</span>
+            <span class="slide-new">${fmt(d.chegirma_narx)}</span>
+          </div>
+        </div>
+      </div>`;
+    }).join('');
+  }catch(e){console.error(e);}
+}
+
+async function loadKafelar(){
+  try{
+    const {data}=await sb.from('kafelar').select('*').eq('faol',true);
+    const list=document.getElementById('kafeList');
+    if(!data||!data.length){list.innerHTML='<div class="loading">Kafelar topilmadi</div>';return;}
+    window._kafeData=data;
+    list.innerHTML=data.map((k,i)=>`
+      <div class="kafe-card" onclick="openKafe(${i})">
+        <div class="kafe-emoji">${k.rasm_url?`<img src="${k.rasm_url}" alt="${k.nomi}" onerror="this.parentElement.textContent='🍽'">`:'🍽'}</div>
+        <div class="kafe-info">
+          <div class="kafe-name">${k.nomi||'—'}</div>
+          <div class="kafe-meta">📍 ${k.manzil||'—'} · 📞 ${k.telefon||'—'}</div>
+          <div class="kafe-tags">
+            ${k.toy_xizmati?'<span class="kafe-tag">To\'y xizmati</span>':''}
+            ${k.haftalik_xizmat?'<span class="kafe-tag">Haftalik</span>':''}
+            <span class="kafe-tag">${k.turi||'oshxona'}</span>
+          </div>
+        </div>
+        <div class="kafe-arrow">›</div>
+      </div>`).join('');
+  }catch(e){console.error(e);}
+}
+
+function openChegirmaDetail(i){
+  const d=window._chegirmaData[i];if(!d)return;
+  const t=d.menyular||{};const k=d.kafelar||{};
+  currentFood={id:d.taom_id,nomi:t.nomi||'—',narx:d.chegirma_narx,porsiya:'',kafe_id:d.kafe_id};
+  currentKafe={id:d.kafe_id,nomi:k.nomi||'—'};
+  currentQty=1;
+  document.getElementById('dImg').textContent='🍽';
+  document.getElementById('dName').textContent=t.nomi||'—';
+  document.getElementById('dGram').textContent='Chegirma narx';
+  document.getElementById('dCafe').textContent=k.nomi||'—';
+  document.getElementById('qtyNum').textContent=1;
+  document.getElementById('dTotal').textContent=fmt(d.chegirma_narx);
+  document.getElementById('detailOverlay').classList.add('show');
+}
+
+function openKafe(i){
+  const k=window._kafeData[i];if(!k)return;
+  currentKafe=k;
+  document.getElementById('kafePageTitle').textContent=k.nomi;
+  document.getElementById('kafeName').textContent=k.nomi;
+  document.getElementById('kafeMeta').textContent='📍 '+(k.manzil||'—')+' · 📞 '+(k.telefon||'—');
+  const emojis=k.rasm_url?[k.rasm_url]:['🍽','🥘','🍲'];
+  document.getElementById('kafeSlides').innerHTML=emojis.map(e=>
+    k.rasm_url?`<div class="kafe-slide" style="background:var(--bg2);"><img src="${e}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent='🍽'"></div>`
+    :`<div class="kafe-slide">${e}</div>`
+  ).join('');
+  document.getElementById('slideDots').innerHTML=emojis.map((_,i)=>`<div class="dot${i===0?' active':''}" id="dot${i}"></div>`).join('');
+  slideIdx=0;clearInterval(slideTimer);
+  if(emojis.length>1){
+    slideTimer=setInterval(()=>{
+      slideIdx=(slideIdx+1)%emojis.length;
+      document.getElementById('kafeSlides').style.transform=`translateX(-${slideIdx*100}%)`;
+      emojis.forEach((_,j)=>{const d=document.getElementById('dot'+j);if(d)d.className='dot'+(j===slideIdx?' active':'');});
+    },2500);
+  }
+  menuCat='barchasi';
+  document.querySelectorAll('#menuCats .cat').forEach((c,j)=>c.classList.toggle('active',j===0));
+  loadMenu(k.id,'barchasi');
+  showPage('kafePage');
+  const t2=document.getElementById('themeBtn2');
+  if(t2)t2.textContent=document.body.classList.contains('dark')?'☀️':'🌙';
+}
+
+function openKafeFromSearch(i){
+  const k=window._kafeSearchData[i];
+  if(!k)return;
+  window._kafeData=[k,...(window._kafeData||[]).filter(x=>x.id!==k.id)];
+  openKafe(0);
+}
+
+async function loadMenu(kafeId,cat){
+  document.getElementById('menuGrid').innerHTML='<div class="loading" style="grid-column:1/-1">Yuklanmoqda...</div>';
+  try{
+    let q=sb.from('menyular').select('*').eq('kafe_id',kafeId).eq('faol',true);
+    if(cat!=='barchasi')q=q.eq('kategoriya',cat);
+    const {data}=await q;
+    renderMenu(data||[]);
+  }catch(e){console.error(e);}
+}
+
+function renderMenu(list){
+  const grid=document.getElementById('menuGrid');
+  if(!list.length){grid.innerHTML='<div class="loading" style="grid-column:1/-1">Taomlar topilmadi</div>';return;}
+  window._menuData=list;
+  grid.innerHTML=list.map((f,i)=>`
+    <div class="food-card" onclick="openDetail(${i})">
+      <div class="food-img">${f.rasm_url?`<img src="${f.rasm_url}" alt="${f.nomi}" onerror="this.parentElement.textContent='🍽'">`:'🍽'}</div>
+      <div class="food-body">
+        <div class="food-name">${f.nomi}</div>
+        <div class="food-gram">${f.porsiya||f.tavsif||''}</div>
+        <div class="food-bottom">
+          <div class="food-price">${fmt(f.narx)}</div>
+          <button class="add-btn" onclick="event.stopPropagation();quickAdd(${i})">+</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+function filterMenu(el,cat){
+  document.querySelectorAll('#menuCats .cat').forEach(c=>c.classList.remove('active'));
+  el.classList.add('active');menuCat=cat;loadMenu(currentKafe.id,cat);
+}
+
+async function doSearch(val){
+  const sr=document.getElementById('searchResults');
+  const hc=document.getElementById('homeContent');
+  if(!val){sr.style.display='none';hc.style.display='block';return;}
+  hc.style.display='none';sr.style.display='block';
+  try{
+    const [{data:taomlar},{data:kafelar}]=await Promise.all([
+      sb.from('menyular').select('*,kafelar(nomi,id)').ilike('nomi',`%${val}%`).eq('faol',true),
+      sb.from('kafelar').select('*').ilike('nomi',`%${val}%`).eq('faol',true)
+    ]);
+    window._searchData=taomlar||[];
+    window._kafeSearchData=kafelar||[];
+    let html='';
+    if(kafelar&&kafelar.length){
+      html+=kafelar.map((k,i)=>`
+        <div class="sr-item" onclick="openKafeFromSearch(${i})">
+          <div class="sr-emoji">${k.rasm_url?`<img src="${k.rasm_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent='🏪'">`:'🏪'}</div>
+          <div class="sr-info">
+            <div class="sr-name">${k.nomi}</div>
+            <div class="sr-cafe">📍 ${k.manzil||'—'}</div>
+          </div>
+          <div style="font-size:11px;color:var(--accent);font-weight:500;">${k.turi||'oshxona'}</div>
+        </div>`).join('');
+    }
+    if(taomlar&&taomlar.length){
+      html+=taomlar.map((f,i)=>`
+        <div class="sr-item" onclick="openSearchDetail(${i})">
+          <div class="sr-emoji">${f.rasm_url?`<img src="${f.rasm_url}" style="width:100%;height:100%;object-fit:cover;" onerror="this.parentElement.textContent='🍽'">`:'🍽'}</div>
+          <div class="sr-info">
+            <div class="sr-name">${f.nomi}</div>
+            <div class="sr-cafe">${(f.kafelar&&f.kafelar.nomi)||'—'} · ${f.porsiya||''}</div>
+          </div>
+          <div class="sr-price">${fmt(f.narx)}</div>
+        </div>`).join('');
+    }
+    sr.innerHTML=html||'<div style="text-align:center;padding:24px 0;color:var(--text2);font-size:13px;">Hech narsa topilmadi</div>';
+  }catch(e){console.error(e);}
+}
+
+function openSearchDetail(i){
+  const f=window._searchData[i];if(!f)return;
+  currentFood=f;currentQty=1;
+  const img=document.getElementById('dImg');
+  if(f.rasm_url){img.innerHTML=`<img src="${f.rasm_url}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" onerror="this.parentElement.textContent='🍽'">`;}
+  else{img.textContent='🍽';}
+  document.getElementById('dName').textContent=f.nomi;
+  document.getElementById('dGram').textContent=f.porsiya||f.tavsif||'';
+  document.getElementById('dCafe').textContent=(f.kafelar&&f.kafelar.nomi)||'';
+  document.getElementById('qtyNum').textContent=1;
+  document.getElementById('dTotal').textContent=fmt(f.narx);
+  document.getElementById('detailOverlay').classList.add('show');
+}
+
+function openDetail(i){
+  const f=window._menuData[i];if(!f)return;
+  currentFood=f;currentQty=1;
+  const img=document.getElementById('dImg');
+  if(f.rasm_url){img.innerHTML=`<img src="${f.rasm_url}" style="width:100%;height:100%;object-fit:cover;border-radius:14px;" onerror="this.parentElement.textContent='🍽'">`;}
+  else{img.textContent='🍽';}
+  document.getElementById('dName').textContent=f.nomi;
+  document.getElementById('dGram').textContent=f.porsiya||f.tavsif||'';
+  document.getElementById('dCafe').textContent=currentKafe?currentKafe.nomi:'';
+  document.getElementById('qtyNum').textContent=1;
+  document.getElementById('dTotal').textContent=fmt(f.narx);
+  document.getElementById('detailOverlay').classList.add('show');
+}
+
+function closeDetail(){document.getElementById('detailOverlay').classList.remove('show');}
+
+function changeQty(d){
+  currentQty=Math.max(1,currentQty+d);
+  document.getElementById('qtyNum').textContent=currentQty;
+  document.getElementById('dTotal').textContent=fmt(currentFood.narx*currentQty);
+}
+
+function addToCart(){
+  const ex=cart.find(c=>c.id===currentFood.id);
+  if(ex)ex.qty+=currentQty;
+  else cart.push({...currentFood,qty:currentQty,kafe:currentKafe});
+  updateCartBar();closeDetail();
+}
+
+function quickAdd(i){
+  const f=window._menuData[i];if(!f)return;
+  const ex=cart.find(c=>c.id===f.id);
+  if(ex)ex.qty++;
+  else cart.push({...f,qty:1,kafe:currentKafe});
+  updateCartBar();
+}
+
+function updateCartBar(){
+  const total=cart.reduce((s,c)=>s+c.narx*c.qty,0);
+  const count=cart.reduce((s,c)=>s+c.qty,0);
+  document.getElementById('cbCount').textContent=count;
+  document.getElementById('cbSum').textContent=fmt(total);
+  document.getElementById('cartBar').classList.toggle('show',cart.length>0);
+}
+
+function openCart(){renderCartItems();document.getElementById('cartOverlay').classList.add('show');}
+function closeCart(){document.getElementById('cartOverlay').classList.remove('show');}
+
+function renderCartItems(){
+  const total=cart.reduce((s,c)=>s+c.narx*c.qty,0);
+  document.getElementById('cartItems').innerHTML=cart.map(c=>`
+    <div class="cart-item">
+      <div class="ci-img">${c.rasm_url?`<img src="${c.rasm_url}" onerror="this.parentElement.textContent='🍽'">`:'🍽'}</div>
+      <div class="ci-info">
+        <div class="ci-name">${c.nomi}</div>
+        <div class="ci-price">${fmt(c.narx)} × ${c.qty} = ${fmt(c.narx*c.qty)}</div>
+      </div>
+      <div class="ci-qty">
+        <button class="cq-btn" onclick="cartQty('${c.id}',-1)">−</button>
+        <div class="cq-num">${c.qty}</div>
+        <button class="cq-btn" onclick="cartQty('${c.id}',1)">+</button>
+        <button class="rm-btn" onclick="removeCart('${c.id}')">🗑</button>
+      </div>
+    </div>`).join('');
+  document.getElementById('ctSum').textContent=fmt(total);
+}
+
+function cartQty(id,d){
+  const item=cart.find(c=>c.id==id);if(!item)return;
+  item.qty+=d;
+  if(item.qty<=0)cart=cart.filter(c=>c.id!=id);
+  updateCartBar();
+  if(!cart.length){closeCart();return;}
+  renderCartItems();
+}
+
+function removeCart(id){
+  cart=cart.filter(c=>c.id!=id);
+  updateCartBar();
+  if(!cart.length){closeCart();return;}
+  renderCartItems();
+}
+
+function showOrderForm(){
+  const summary=cart.map(c=>c.nomi+' × '+c.qty).join(', ');
+  const total=cart.reduce((s,c)=>s+c.narx*c.qty,0);
+  document.getElementById('orderSummary').textContent=summary+' | Jami: '+fmt(total);
+  closeCart();
+  document.getElementById('orderOverlay').classList.add('show');
+}
+
+function closeOrder(){document.getElementById('orderOverlay').classList.remove('show');}
+
+async function submitOrder(){
+  const ism=document.getElementById('orderIsm').value.trim();
+  const tel=document.getElementById('orderTel').value.trim();
+  const manzil=document.getElementById('orderManzil').value.trim();
+  if(!ism||!tel){alert('Ism va telefon raqam kiritish shart!');return;}
+  try{
+    const kafeId=cart[0]?.kafe?.id;
+    const jami=cart.reduce((s,c)=>s+c.narx*c.qty,0);
+    const {error:upsertErr}=await sb.from('mijozlar').upsert(
+      {telefon:tel,ism:ism},
+      {onConflict:'telefon',ignoreDuplicates:false}
+    );
+    if(upsertErr)console.error('Upsert xato:',upsertErr);
+    const {data:mijoz}=await sb.from('mijozlar').select('id').eq('telefon',tel).single();
+    const {data:buyurtma}=await sb.from('buyurtmalar').insert({
+      mijoz_id:mijoz?.id,kafe_id:kafeId,turi:'oddiy',holat:'yangi',jami_narx:jami,manzil:manzil||null
+    }).select().single();
+    if(buyurtma){
+      await sb.from('buyurtma_tafsilot').insert(
+        cart.map(c=>({buyurtma_id:buyurtma.id,taom_id:c.id,soni:c.qty,narx:c.narx}))
+      );
+    }
+    cart=[];updateCartBar();closeOrder();
+    document.getElementById('orderIsm').value='';
+    document.getElementById('orderTel').value='';
+    document.getElementById('orderManzil').value='';
+    alert('✅ Buyurtmangiz qabul qilindi!\nKafe tez orada siz bilan bog\'lanadi.');
+  }catch(e){
+    console.error(e);
+    alert('Xatolik yuz berdi. Qayta urinib ko\'ring.');
+  }
+}
+
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('/sw.js').catch(console.error);
+}
+
+loadHome();
+</script>
+</body>
+</html>

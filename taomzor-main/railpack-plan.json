@@ -1,0 +1,18 @@
+{
+  "runtime": {
+    "name": "python",
+    "version": "3.11"
+  },
+  "install": {
+    "packages": {
+      "apt": [],
+      "mise": ["python@3.11"]
+    }
+  },
+  "build": {
+    "command": "pip install -r bot/requirements.txt"
+  },
+  "start": {
+    "command": "python bot/main.py"
+  }
+}
