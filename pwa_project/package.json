@@ -1,0 +1,10 @@
+{
+  "name": "taomzor-pwa",
+  "version": "1.0.0",
+  "scripts": {
+    "start": "npx serve -l 8080"
+  },
+  "devDependencies": {
+    "serve": "^14.2.0"
+  }
+}
